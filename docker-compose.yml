@@ -1,0 +1,16 @@
+services:
+  antigravity:
+    build: .
+    container_name: antigravity-desktop
+    ports:
+      - "3000:6901"          # KasmVNC default port
+    volumes:
+      - ./config:/home/kasm-user/.config
+      - ./workspace:/workspace
+    restart: unless-stopped
+    privileged: true
+    shm_size: 2g
+    environment:
+      - VNC_USER=kasm_user
+      - VNC_PW=antigravity
+      - VNC_RESOLUTION=3840x2160
