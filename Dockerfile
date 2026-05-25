@@ -34,6 +34,12 @@ RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor 
     echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list && \
     apt-get update && apt-get install -y code
 
+USER kasm-user
+RUN yes | code --install-extension ms-vscode.live-server --force \
+    --install-extension yzhang.markdown-all-in-one \ 
+    --install-extension robole.marky-stats 
+
+USER root
 # 1Password
 RUN curl -sS https://downloads.1password.com/linux/keys/1password.asc | gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg && \
     echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' > /etc/apt/sources.list.d/1password.list && \
@@ -49,6 +55,10 @@ RUN mkdir -p /etc/apt/keyrings && \
     echo "deb [signed-by=/etc/apt/keyrings/antigravity-repo-key.gpg] https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/ antigravity-debian main" > /etc/apt/sources.list.d/antigravity.list && \
     apt-get update && apt-get install -y antigravity
 
+USER kasm-user
+RUN yes | antigravity --install-extension ms-vscode.live-server --install-extension yzhang.markdown-all-in-one --install-extension robole.marky-stats
+
+USER root
 # Create workspace
 RUN mkdir -p /workspace && chown -R kasm-user:kasm-user /workspace
 

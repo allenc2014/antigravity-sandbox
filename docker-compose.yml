@@ -2,6 +2,8 @@ services:
   antigravity:
     build: .
     container_name: antigravity-desktop
+    command: >
+      sh -c "rm -f /home/kasm-user/.config/chromium/SingletonLock"
     ports:
       - "3000:6901"          # KasmVNC default port
     volumes:
