@@ -14,3 +14,4 @@ services:
       - VNC_USER=kasm_user
       - VNC_PW=antigravity
       - VNC_RESOLUTION=3840x2160
+      - KASMVNC_LOG_LEVEL=error

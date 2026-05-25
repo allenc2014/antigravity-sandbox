@@ -2,12 +2,32 @@ FROM kasmweb/core-ubuntu-jammy:1.16.0
 
 USER root
 
-# Install basic tools
+# Install basic tools and add PPA for native Chromium
 RUN apt-get update && apt-get install -y \
     curl gnupg wget apt-transport-https ca-certificates \
     git python3 python3-pip python3-venv build-essential \
-    vim htop unzip zip chromium-browser \
+    vim htop unzip zip software-properties-common \
+    && add-apt-repository -y ppa:xtradeb/apps \
+    && apt-get update && apt-get install -y chromium \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Fix Chromium sandbox issues inside Kasm/Docker containers
+ENV CHROMIUM_FLAGS="--no-sandbox"
+
+# Set it as the default browser globally
+ENV BROWSER=/usr/bin/chromium
+
+# Python 3.12 (via deadsnakes PPA)
+RUN add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && apt-get install -y \
+    python3.12 python3.12-venv python3.12-dev \
     && apt-get clean
+
+# Node.js (Latest LTS)
+RUN mkdir -p /etc/apt/keyrings && \
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" > /etc/apt/sources.list.d/nodesource.list && \
+    apt-get update && apt-get install nodejs -y
 
 # VS Code
 RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/keyrings/packages.microsoft.gpg && \
