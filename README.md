@@ -25,9 +25,10 @@ cd antigravity-sandbox
 # Build and start
 docker compose up -d --build
 
-# Open the desktop in your browser
+# Open the desktop in your browser (Must use HTTP, not HTTPS)
+# Default Username: abc
+# Default Password: antigravity  (set PASSWORD= in docker-compose.yml to change)
 open http://localhost:3000
-# Password: antigravity  (set PASSWORD= in docker-compose.yml to change)
 ```
 
 > **First run:** VS Code and Antigravity IDE extensions are installed automatically
