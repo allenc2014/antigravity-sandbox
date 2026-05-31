@@ -2,18 +2,20 @@ services:
   antigravity:
     build: .
     container_name: antigravity-desktop
-    command: >
-      sh -c "rm -f /home/kasm-user/.config/chromium/SingletonLock"
     ports:
-      - "3000:6901"          # KasmVNC default port
+      - "3000:3000"          # webtop web UI (HTTP)
     volumes:
-      - ./config:/home/kasm-user/.config
+      - ./config:/config     # abc's home — persists settings, extensions, dotfiles
       - ./workspace:/workspace
     restart: unless-stopped
-    privileged: true
+    privileged: true         # required for Docker-in-Docker (nested dockerd)
     shm_size: 2g
     environment:
-      - VNC_USER=kasm_user
-      - VNC_PW=antigravity
-      - VNC_RESOLUTION=3840x2160
-      - KASMVNC_LOG_LEVEL=error
+      - PUID=1000                              # map "abc" to this host UID
+      - PGID=1000                              # map "abc" to this host GID
+      - TZ=${TZ:-America/New_York}             # set in .env
+      - PASSWORD=${PASSWORD:-antigravity}      # set in .env (change in production)
+      - GIT_USER_NAME=${GIT_USER_NAME:-}   # set in .env or shell env
+      - GIT_USER_EMAIL=${GIT_USER_EMAIL:-} # set in .env or shell env
+      - GIT_CREDENTIAL_HELPER=${GIT_CREDENTIAL_HELPER:-}                    # store | cache | <unset>
+      - GIT_CREDENTIAL_CACHE_TIMEOUT=${GIT_CREDENTIAL_CACHE_TIMEOUT:-900}  # seconds, only used with 'cache'

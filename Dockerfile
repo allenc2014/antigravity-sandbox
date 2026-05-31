@@ -1,65 +1,83 @@
-FROM kasmweb/core-ubuntu-jammy:1.16.0
+FROM lscr.io/linuxserver/webtop:ubuntu-xfce
 
-USER root
+# All build steps run as root (linuxserver default during build).
+# The desktop session user is "abc" — consistent everywhere, no hyphen/underscore ambiguity.
+# Configure PUID / PGID at runtime to map "abc" to your host UID:
+#   docker run -e PUID=1000 -e PGID=1000 ...
 
-# Install basic tools and add PPA for native Chromium
+# ── Basic tools + Chromium ───────────────────────────────────────────────────
 RUN apt-get update && apt-get install -y \
-    curl gnupg wget apt-transport-https ca-certificates \
-    git python3 python3-pip python3-venv build-essential \
-    vim htop unzip zip software-properties-common \
+        curl gnupg wget apt-transport-https ca-certificates \
+        git python3 python3-pip python3-venv build-essential \
+        vim htop unzip zip software-properties-common \
     && add-apt-repository -y ppa:xtradeb/apps \
     && apt-get update && apt-get install -y chromium \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Fix Chromium sandbox issues inside Kasm/Docker containers
+# Fix Chromium sandbox issues inside Docker containers
 ENV CHROMIUM_FLAGS="--no-sandbox"
-
-# Set it as the default browser globally
 ENV BROWSER=/usr/bin/chromium
 
-# Python 3.12 (via deadsnakes PPA)
+# ── Python 3.12 ─────────────────────────────────────────────────────────────
 RUN add-apt-repository ppa:deadsnakes/ppa && \
     apt-get update && apt-get install -y \
-    python3.12 python3.12-venv python3.12-dev \
-    && apt-get clean
+        python3.12 python3.12-venv python3.12-dev \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Node.js (Latest LTS)
+# ── Node.js 20 LTS ──────────────────────────────────────────────────────────
 RUN mkdir -p /etc/apt/keyrings && \
-    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
-    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" > /etc/apt/sources.list.d/nodesource.list && \
-    apt-get update && apt-get install nodejs -y
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
+        | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" \
+        > /etc/apt/sources.list.d/nodesource.list && \
+    apt-get update && apt-get install -y nodejs && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# VS Code
-RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /etc/apt/keyrings/packages.microsoft.gpg && \
-    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list && \
-    apt-get update && apt-get install -y code
+# ── VS Code ──────────────────────────────────────────────────────────────────
+RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc \
+        | gpg --dearmor > /etc/apt/keyrings/packages.microsoft.gpg && \
+    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" \
+        > /etc/apt/sources.list.d/vscode.list && \
+    apt-get update && apt-get install -y code && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-USER kasm-user
-RUN yes | code --install-extension ms-vscode.live-server --force \
-    --install-extension yzhang.markdown-all-in-one \ 
-    --install-extension robole.marky-stats 
-
-USER root
-# 1Password
-RUN curl -sS https://downloads.1password.com/linux/keys/1password.asc | gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg && \
-    echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' > /etc/apt/sources.list.d/1password.list && \
+# ── 1Password ────────────────────────────────────────────────────────────────
+RUN curl -sS https://downloads.1password.com/linux/keys/1password.asc \
+        | gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg && \
+    echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' \
+        > /etc/apt/sources.list.d/1password.list && \
     mkdir -p /etc/debsig/policies/AC2D62742012EA22/ && \
-    curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | tee /etc/debsig/policies/AC2D62742012EA22/1password.pol && \
+    curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol \
+        | tee /etc/debsig/policies/AC2D62742012EA22/1password.pol && \
     mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22 && \
-    curl -sS https://downloads.1password.com/linux/keys/1password.asc | gpg --dearmor --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg && \
-    apt-get update && apt-get install -y 1password
+    curl -sS https://downloads.1password.com/linux/keys/1password.asc \
+        | gpg --dearmor --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg && \
+    apt-get update && apt-get install -y 1password && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Antigravity
-RUN mkdir -p /etc/apt/keyrings && \
-    curl -fsSL https://us-central1-apt.pkg.dev/doc/repo-signing-key.gpg | gpg --dearmor --yes -o /etc/apt/keyrings/antigravity-repo-key.gpg && \
-    echo "deb [signed-by=/etc/apt/keyrings/antigravity-repo-key.gpg] https://us-central1-apt.pkg.dev/projects/antigravity-auto-updater-dev/ antigravity-debian main" > /etc/apt/sources.list.d/antigravity.list && \
-    apt-get update && apt-get install -y antigravity
+# ── Antigravity IDE ──────────────────────────────────────────────────────────
+COPY update_antigravity_ide.sh /usr/local/bin/update_antigravity_ide.sh
+RUN chmod +x /usr/local/bin/update_antigravity_ide.sh && \
+    /usr/local/bin/update_antigravity_ide.sh
 
-USER kasm-user
-RUN yes | antigravity --install-extension ms-vscode.live-server --install-extension yzhang.markdown-all-in-one --install-extension robole.marky-stats
+# ── Docker Engine (Docker-in-Docker) ─────────────────────────────────────────
+# Requires --privileged at runtime (see docker-compose.yml).
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
+        | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
+    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
+        > /etc/apt/sources.list.d/docker.list && \
+    apt-get update && apt-get install -y \
+        docker-ce docker-ce-cli containerd.io \
+        docker-buildx-plugin docker-compose-plugin \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-USER root
-# Create workspace
-RUN mkdir -p /workspace && chown -R kasm-user:kasm-user /workspace
+# Allow abc to use docker without sudo
+RUN groupadd -f docker && usermod -aG docker abc
 
-USER kasm-user
+# ── Workspace ────────────────────────────────────────────────────────────────
+RUN mkdir -p /workspace && chown -R abc:abc /workspace
+
+# ── First-run init: install IDE extensions for abc ───────────────────────────
+# /custom-cont-init.d/ scripts run as root at every container start (before the
+# desktop session). The marker file prevents re-installing on subsequent starts.
+COPY --chmod=755 custom-cont-init.d/10-install-extensions.sh /custom-cont-init.d/10-install-extensions.sh
