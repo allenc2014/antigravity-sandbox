@@ -7,12 +7,12 @@ A browser-accessible Linux desktop sandbox powered by [linuxserver/webtop](https
 | Tool | Details |
 |---|---|
 | **Antigravity IDE** | Latest version, installed via `update_antigravity_ide.sh` at build time |
+| **Windsurf** | Latest stable, with Live Server, Markdown All-in-One, Marky Stats extensions |
 | **VS Code** | Latest stable, with Live Server, Markdown All-in-One, Marky Stats extensions |
 | **Chromium** | Native (via xtradeb PPA), sandboxing disabled for container compatibility |
 | **Python** | `python3` (system) + Python 3.12 (via deadsnakes PPA) |
 | **Node.js** | v20 LTS |
 | **Docker** | Docker Engine + Compose plugin (Docker-in-Docker via `--privileged`) |
-| **1Password** | Desktop app |
 | **Desktop** | XFCE4, accessible in the browser via webtop (KasmVNC) |
 
 ## Quick start

@@ -27,5 +27,11 @@ sudo -u abc HOME=/config antigravity-ide \
     --install-extension yzhang.markdown-all-in-one \
     --install-extension robole.marky-stats
 
+echo "[init] Installing Windsurf extensions for abc..."
+sudo -u abc HOME=/config windsurf \
+    --install-extension ms-vscode.live-server \
+    --install-extension yzhang.markdown-all-in-one \
+    --install-extension robole.marky-stats
+
 touch "$MARKER"
 echo "[init] IDE extensions installed successfully."
