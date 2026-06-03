@@ -15,7 +15,7 @@ A browser-accessible Linux desktop sandbox powered by [linuxserver/webtop](https
 
 | Tool | Details |
 |---|---|
-| **Antigravity IDE** | Latest version, installed via `update_antigravity_ide.sh` at build time |
+| **Antigravity IDE** | Latest 2.0.x, installed via `update_antigravity_ide.sh` at build time |
 | **Windsurf** | Latest stable, with Live Server, Markdown All-in-One, Marky Stats extensions |
 | **VS Code** | Latest stable, with Live Server, Markdown All-in-One, Marky Stats extensions |
 | **Chromium** | Native (via xtradeb PPA), sandboxing disabled for container compatibility |
