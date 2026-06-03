@@ -34,31 +34,58 @@ open http://localhost:3000
 > **First run:** VS Code and Antigravity IDE extensions are installed automatically
 > on the first container start. This takes ~30 seconds before the desktop is fully ready.
 
+## Running on Windows (WSL 2 with Ubuntu)
+
+To run this sandbox on Windows, use **WSL 2** with **Ubuntu**.
+
+1. **Clone in the Linux filesystem**: For optimal performance and to avoid file permission issues, do not clone the repository in the Windows host mount (`/mnt/c/...`). Instead, clone it inside your WSL user home directory:
+   ```bash
+   cd ~
+   git clone <repo-url>
+   cd antigravity-sandbox
+   ```
+2. **Setup Docker**:
+   * **If using Docker Desktop**: Ensure Docker Desktop is running on Windows and WSL integration is enabled for your Ubuntu distro under **Settings > Resources > WSL integration**.
+   * **If using Docker Engine installed directly in WSL**: Ensure the docker service is running inside Ubuntu:
+     ```bash
+     sudo service docker start
+     ```
+3. **Build and start**:
+   ```bash
+   docker compose up -d --build
+   ```
+4. **Access the desktop**: Open your Windows web browser and navigate to `http://localhost:3000`.
+
 ## Configuration
+
+To customize your sandbox settings, copy the example environment file to `.env`:
+
+```bash
+cp .env.example .env
+```
+
+### Environment Variables (`.env`)
+
+Modify `.env` to configure the desktop session and Git identity:
+
+| Variable | Description | Default / Example |
+|---|---|---|
+| `TZ` | Timezone database name | `America/New_York` |
+| `PASSWORD` | Password for browser login (`abc` user) | `antigravity` |
+| `GIT_USER_NAME` | Git name configured on container startup | `Your Name` |
+| `GIT_USER_EMAIL` | Git email configured on container startup | `you@example.com` |
+| `GIT_CREDENTIAL_HELPER` | Git credential storage method (`store`, `cache`, or leave blank) | `store` |
+| `GIT_CREDENTIAL_CACHE_TIMEOUT` | Time in seconds `cache` helper remembers credentials | `900` |
 
 ### User mapping (PUID / PGID)
 
-The desktop session runs as user `abc`. Map it to your host user to avoid file permission issues on volume-mounted directories:
+The desktop session runs as user `abc`. If your host user UID and GID are not `1000`, map them in `docker-compose.yml` to avoid file permission issues on volume-mounted directories:
 
 ```yaml
 # docker-compose.yml
 environment:
   - PUID=1000   # output of: id -u
   - PGID=1000   # output of: id -g
-```
-
-### Changing the password
-
-```yaml
-environment:
-  - PASSWORD=your-secure-password
-```
-
-### Timezone
-
-```yaml
-environment:
-  - TZ=America/New_York
 ```
 
 ### Resolution
@@ -72,6 +99,10 @@ Resize the browser window — webtop adjusts dynamically. You can also set a fix
 | `./config` | `/config` | `abc` user's home directory — persists settings, extensions, dotfiles |
 | `./workspace` | `/workspace` | Shared project files |
 
+> [!WARNING]
+> When running in WSL 2, the `./workspace` and `./config` folders reside entirely inside the WSL Ubuntu virtual machine. If you unregister or remove your WSL distribution, this volume data will be permanently deleted. Always commit and push your project code to a remote Git repository before removing or resetting the WSL VM.
+
+
 ## Docker-in-Docker
 
 The container runs with `privileged: true`, which allows a nested Docker daemon. Inside the desktop:
@@ -82,7 +113,7 @@ sudo dockerd &
 
 # Use Docker and Compose normally
 docker ps
-docker compose up
+docker compose up -d
 ```
 
 ## Updating Antigravity IDE
