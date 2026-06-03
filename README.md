@@ -144,3 +144,7 @@ docker compose up -d
 ├── config/                             # Persisted abc home (gitignored)
 └── workspace/                          # Shared workspace files
 ```
+
+## Credits & Acknowledgments
+
+* The `update_antigravity_ide.sh` script is adapted from the guide on [LinuxCapable: How to Install Google Antigravity on Ubuntu Linux](https://linuxcapable.com/how-to-install-google-antigravity-on-ubuntu-linux/).
