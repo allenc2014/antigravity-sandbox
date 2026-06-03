@@ -2,6 +2,15 @@
 
 A browser-accessible Linux desktop sandbox powered by [linuxserver/webtop](https://docs.linuxserver.io/images/docker-webtop/), pre-loaded with Antigravity IDE and a curated developer toolset.
 
+> [!CAUTION]
+> **Safety Disclaimer & Motivation**
+>
+> AI coding agents (like Antigravity) are highly agentic and possess broad command-line execution privileges. If not carefully isolated, a misbehaving agent or a misinterpreted prompt can run destructive commands, potentially causing irreparable damage or deleting files on your host system. 
+> 
+> This sandbox project was created after a real-world incident where the Antigravity agent deleted entire projects on my home server. Running the agent inside this containerized, isolated desktop environment ensures that any accidental file deletion or system alteration is safely contained within the sandbox.
+> 
+> **Use at your own risk. This project is provided "as is" without warranty of any kind.**
+
 ## What's included
 
 | Tool | Details |
