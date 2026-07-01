@@ -34,20 +34,20 @@ RUN mkdir -p /etc/apt/keyrings && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ── VS Code ──────────────────────────────────────────────────────────────────
-RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc \
-        | gpg --dearmor > /etc/apt/keyrings/packages.microsoft.gpg && \
-    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" \
-        > /etc/apt/sources.list.d/vscode.list && \
-    apt-get update && apt-get install -y code && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+# RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc \
+#        | gpg --dearmor > /etc/apt/keyrings/packages.microsoft.gpg && \
+#    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" \
+#        > /etc/apt/sources.list.d/vscode.list && \
+#    apt-get update && apt-get install -y code && \
+#    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ── Windsurf ─────────────────────────────────────────────────────────────────
-RUN wget -qO- https://windsurf-stable.codeiumdata.com/wVxQEIWkwPUEAGf3/windsurf.gpg \
-        | gpg --dearmor > /etc/apt/keyrings/windsurf-stable.gpg && \
-    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/windsurf-stable.gpg] https://windsurf-stable.codeiumdata.com/wVxQEIWkwPUEAGf3/apt stable main" \
-        > /etc/apt/sources.list.d/windsurf.list && \
-    apt-get update && apt-get install -y windsurf && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
+# RUN wget -qO- https://windsurf-stable.codeiumdata.com/wVxQEIWkwPUEAGf3/windsurf.gpg \
+#        | gpg --dearmor > /etc/apt/keyrings/windsurf-stable.gpg && \
+#    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/windsurf-stable.gpg] https://windsurf-stable.codeiumdata.com/wVxQEIWkwPUEAGf3/apt stable main" \
+#        > /etc/apt/sources.list.d/windsurf.list && \
+#    apt-get update && apt-get install -y windsurf && \
+#    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ── Antigravity IDE ──────────────────────────────────────────────────────────
 COPY update_antigravity_ide.sh /usr/local/bin/update_antigravity_ide.sh
