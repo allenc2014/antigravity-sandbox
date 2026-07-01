@@ -4,6 +4,7 @@ services:
     container_name: antigravity-desktop
     ports:
       - "3000:3000"          # webtop web UI (HTTP)
+      - "3001:3001"          # webtop web UI (HTTPS)
     volumes:
       - ./config:/config     # abc's home — persists settings, extensions, dotfiles
       - ./workspace:/workspace
@@ -19,3 +20,4 @@ services:
       - GIT_USER_EMAIL=${GIT_USER_EMAIL:-} # set in .env or shell env
       - GIT_CREDENTIAL_HELPER=${GIT_CREDENTIAL_HELPER:-}                    # store | cache | <unset>
       - GIT_CREDENTIAL_CACHE_TIMEOUT=${GIT_CREDENTIAL_CACHE_TIMEOUT:-900}  # seconds, only used with 'cache'
+
