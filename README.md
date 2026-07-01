@@ -65,6 +65,47 @@ To run this sandbox on Windows, use **WSL 2** with **Ubuntu**.
    ```
 4. **Access the desktop**: Open your Windows web browser and navigate to `http://localhost:3000`.
 
+## Native Ubuntu 26 LTS Setup (Without Docker)
+
+If you prefer to install these tools directly on your Ubuntu 26 LTS host (or inside an Ubuntu WSL 2 instance) instead of running them via Docker, a setup script is provided.
+
+This script installs all the packages and configurations matching the Docker container setup:
+* XFCE Desktop, TigerVNC, and noVNC (enabled by default, provides browser-based desktop access on port 3000)
+* Basic utilities & PPA repositories
+* Chromium browser (via `xtradeb/apps` PPA)
+* Python 3.12 (via `deadsnakes/ppa` PPA)
+* Node.js 20 LTS
+* Antigravity IDE (via `update_antigravity_ide.sh`)
+* Docker Engine (with user group configurations)
+* Pre-configured extensions for VS Code, Windsurf, and Antigravity IDE (if the IDEs are installed)
+
+To run the installation:
+
+```bash
+# Run the script with sudo
+sudo ./setup_ubuntu.sh [options]
+```
+
+### Options:
+* `--no-desktop`: Skip installing browser-accessible XFCE desktop environment and noVNC.
+* `--with-vscode`: Install VS Code IDE alongside other tools.
+* `--with-windsurf`: Install Windsurf IDE alongside other tools.
+* `--all`: Install all optional IDEs (VS Code & Windsurf).
+
+### Launching the Browser-Accessible Desktop:
+If the desktop environment was installed, you can start the native sandbox desktop from your terminal:
+
+```bash
+# Start the VNC server & noVNC web proxy
+start-desktop
+```
+
+Then open your browser and navigate to one of the following URLs:
+* **HTTP:** `http://localhost:3000/vnc.html`
+* **HTTPS:** `https://localhost:3001/vnc.html`
+
+* Default Password: `antigravity`
+
 ## Configuration
 
 To customize your sandbox settings, copy the example environment file to `.env`:
